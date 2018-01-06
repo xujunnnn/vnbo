@@ -1,0 +1,175 @@
+package com.ebupt.vnbo.entity.vtn;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.ebupt.vnbo.entity.abstracts.Config;
+import com.ebupt.vnbo.entity.abstracts.Operational;
+import com.ebupt.vnbo.entity.exception.ConfigException;
+import com.ebupt.vnbo.entity.exception.ODL_IO_Exception;
+import com.ebupt.vnbo.util.BaseUtil;
+import com.ebupt.vnbo.util.HttpUtil;
+public class Port_Map implements Config,Operational {
+	@JSONField(name="tenant-name")
+	private String tenant_name;
+	@JSONField(name="bridge-name")
+	private String bridge_name;
+	@JSONField(name="interface-name")
+	private String interface_name;
+	@JSONField(name="terminal-name")
+	private String terminal_name;
+	@JSONField(name="node")
+	private String node;
+	@JSONField(name="port-name")
+	private String port_name;
+	
+	private static final String ConfigUrl=BaseUtil.getODL_IP()+"/restconf/config";
+	private static final String VtnConfigUrl=BaseUtil.getODL_IP()+"/restconf/operations";
+	
+	public String getTenant_name() {
+		return tenant_name;
+	}
+
+	public Port_Map setTenant_name(String tenant_name) {
+		this.tenant_name = tenant_name;
+		return this;
+	}
+
+	public String getBridge_name() {
+		return bridge_name;
+	}
+
+	public Port_Map setBridge_name(String bridge_name) {
+		this.bridge_name = bridge_name;
+		return this;
+	}
+
+	public String getInterface_name() {
+		return interface_name;
+	}
+
+	public Port_Map setInterface_name(String interface_name) {
+		this.interface_name = interface_name;
+		return this;
+	}
+
+	public String getTerminal_name() {
+		return terminal_name;
+	}
+
+	public Port_Map setTerminal_name(String terminal_name) {
+		this.terminal_name = terminal_name;
+		return this;
+	}
+
+	public String getNode() {
+		return node;
+	}
+
+	public Port_Map setNode(String node) {
+		this.node = node;
+		return this;
+	}
+
+	public String getPort_name() {
+		return port_name;
+	}
+
+	public Port_Map setPort_name(String port_name) {
+		this.port_name = port_name;
+		return this;
+	}
+
+	
+
+	@Override
+	public String toString() {
+		return "Port_Map [tenant_name=" + tenant_name + ", bridge_name=" + bridge_name + ", interface_name="
+				+ interface_name + ", terminal_name=" + terminal_name + ", node=" + node + ", port_name=" + port_name
+				+ "]";
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((bridge_name == null) ? 0 : bridge_name.hashCode());
+		result = prime * result + ((interface_name == null) ? 0 : interface_name.hashCode());
+		result = prime * result + ((node == null) ? 0 : node.hashCode());
+		result = prime * result + ((port_name == null) ? 0 : port_name.hashCode());
+		result = prime * result + ((tenant_name == null) ? 0 : tenant_name.hashCode());
+		result = prime * result + ((terminal_name == null) ? 0 : terminal_name.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Port_Map other = (Port_Map) obj;
+		if (bridge_name == null) {
+			if (other.bridge_name != null)
+				return false;
+		} else if (!bridge_name.equals(other.bridge_name))
+			return false;
+		if (interface_name == null) {
+			if (other.interface_name != null)
+				return false;
+		} else if (!interface_name.equals(other.interface_name))
+			return false;
+		if (node == null) {
+			if (other.node != null)
+				return false;
+		} else if (!node.equals(other.node))
+			return false;
+		if (port_name == null) {
+			if (other.port_name != null)
+				return false;
+		} else if (!port_name.equals(other.port_name))
+			return false;
+		if (tenant_name == null) {
+			if (other.tenant_name != null)
+				return false;
+		} else if (!tenant_name.equals(other.tenant_name))
+			return false;
+		if (terminal_name == null) {
+			if (other.terminal_name != null)
+				return false;
+		} else if (!terminal_name.equals(other.terminal_name))
+			return false;
+		return true;
+	}
+
+	@Override
+	public void send(String node) throws ODL_IO_Exception {
+		// TODO Auto-generated method stub
+		String url="http://"+VtnConfigUrl+"/vtn-port-map:set-port-map";
+		JSONObject jsonObject2=new JSONObject();
+		jsonObject2.put("input", JSONObject.parseObject(JSON.toJSONString(this)));
+		//System.out.println(url+jsonObject2);
+		String[] response=HttpUtil.Post_request(url,jsonObject2);
+		String responsecode=response[0];
+		String respbody=response[1];
+		if(!"200".equals(responsecode) && !"201".equals(responsecode))
+			throw new ConfigException("vbridge"+this.getBridge_name()+" port_map created failed");
+		
+	}
+
+	@Override
+	public void remove(String node) throws ODL_IO_Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Operational read(String node) throws ODL_IO_Exception {
+		// TODO Auto-generated method stub
+		return null;
+		
+	}
+
+}
