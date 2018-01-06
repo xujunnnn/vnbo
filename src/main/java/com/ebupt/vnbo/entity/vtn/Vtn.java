@@ -80,7 +80,7 @@ public class Vtn implements Config {
 	    String response[]=HttpUtil.Post_request(url,jsonObject);
 	    String responsecode=response[0];
 	    String responsebody=response[1];
-	    if(!"201".equals(responsecode) && !"200".equals(responsecode))
+	    if(!"201".equals(responsecode) && !"200".equals(responsecode) && !"409".equals(responsecode))
 	    	throw new ConfigException("vtn"+this.getTenant_name()+"created failed");
 		
 	}

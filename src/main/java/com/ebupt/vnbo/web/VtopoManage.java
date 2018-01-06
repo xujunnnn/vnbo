@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ebupt.vnbo.entity.exception.ODL_IO_Exception;
 import com.ebupt.vnbo.entity.result.Result;
 import com.ebupt.vnbo.entity.vtopo.VGroup;
+import com.ebupt.vnbo.entity.vtopo.VHost;
 import com.ebupt.vnbo.entity.vtopo.VPort;
 import com.ebupt.vnbo.entity.vtopo.VTopo;
 import com.ebupt.vnbo.service.Vtopo.VtopoService;
@@ -82,6 +83,16 @@ public class VtopoManage {
 	@ApiOperation(value="查询虚拟端口",notes="输入名字和json")
 	public Result delVPort(@PathVariable String Vtopo,@PathVariable String VGroup) throws ODL_IO_Exception{
 		return vtopoService.querryVPorts(Vtopo, VGroup);
+	}
+	@RequestMapping(value="/{Vtopo}/VGroup/{VGroup}/VHost/{name}",method=RequestMethod.PUT)
+	@ApiOperation(value="添加指定虚拟主机",notes="输入名字和json")
+	public Result addVHost(@PathVariable String Vtopo,@PathVariable String VGroup,@PathVariable String name,@RequestBody VHost vHost) throws ODL_IO_Exception{
+		return vtopoService.addVHost(Vtopo, VGroup, name, vHost);
+	}
+	@RequestMapping(value="/{Vtopo}/VGroup/{VGroup}/VHost/{name}",method=RequestMethod.DELETE)
+	@ApiOperation(value="删除指定虚拟主机",notes="输入名字和json")
+	public Result delVHost(@PathVariable String Vtopo,@PathVariable String VGroup,@PathVariable String name) throws ODL_IO_Exception{
+		return vtopoService.deleteVHost(Vtopo, VGroup, name);
 	}
 	
 

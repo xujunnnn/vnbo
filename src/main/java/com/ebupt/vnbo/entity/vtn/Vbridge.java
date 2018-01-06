@@ -127,9 +127,11 @@ public class Vbridge implements Config {
 		{
 			this.mac_Map.setAllowed_hosts(allowed_Hosts.getAllowed_hosts());
 		}
-		if(denyed_Hosts!=null){
+		/**
+		 * if(denyed_Hosts!=null){
 			this.mac_Map.setDenyed_Hosts(denyed_Hosts.getDenied_hosts());
 		}
+		 */
 		return this;
 		
 	}
@@ -179,7 +181,7 @@ public class Vbridge implements Config {
 		JSONObject jsonObject=new JSONObject();
 		jsonObject.put("input", JSONObject.parseObject(JSON.toJSONString(this)));
 		String responsecode=HttpUtil.Post_request(url,jsonObject)[0];
-		if(!"200".equals(responsecode) && !"201".equals(responsecode))
+		if(!"200".equals(responsecode) && !"201".equals(responsecode) && !"409".equals(responsecode))
 			throw new ConfigException("vbridge"+this.getBridge_name()+"created failed");
 	/**
 	 * 	if(this.map_type==Map_Type.mac_map){

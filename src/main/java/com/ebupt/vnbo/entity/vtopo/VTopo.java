@@ -124,11 +124,13 @@ public class VTopo implements Config,Operational {
 		VtnRead vtnRead=new VtnRead();
 		List<VtnRead> vtnReads=vtnRead.readAll();
 		HashSet<VTopo> vTopos=new HashSet<>();
-		for(VtnRead vtr:vtnReads){
-			VTopo vTopo=Adapter(vtr);
-			vTopos.add(vTopo);
+		
+		 for(VtnRead vtr:vtnReads){
+			//opo vTopo=Adapter(vtr);
+			vTopos.add(new VTopo().setVtopo_name(vtr.getTenant_name()).read(null));
 		}
 		
+	
 		return vTopos;
 	}
 

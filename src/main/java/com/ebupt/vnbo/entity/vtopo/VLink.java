@@ -157,10 +157,11 @@ public class VLink implements Config,Operational {
 		Allowed_Hosts allowed_Hosts=new Allowed_Hosts();
 		//读取vgropu中的主机列表
 		Mac_Map mac_Map=new Mac_Map();
-		mac_Map.setTenant_name(vtoponame).setBridge_name(groupA);
-		mac_Map=mac_Map.read(null);
+	//	mac_Map.setTenant_name(vtoponame).setBridge_name(groupA);
+	//	mac_Map=mac_Map.read(null);
 		 this.vlanid= VTopoUtil.get_Vlan(vtoponame);
-		for(Hostmc host:mac_Map.getMac_Map_Config().getAllowedHosts().getVlan_host_desc_list()){
+	/**
+	 * 	for(Hostmc host:mac_Map.getMac_Map_Config().getAllowedHosts().getVlan_host_desc_list()){
 			allowed_Hosts.addHost(host.getHost().split("@")[0]+"@"+vlanid);
 		}
 		//读取vgropu中的主机列表
@@ -169,6 +170,7 @@ public class VLink implements Config,Operational {
 		for(Hostmc host:mac_Map.getMac_Map_Config().getAllowedHosts().getVlan_host_desc_list()){
 			allowed_Hosts.addHost(host.getHost().split("@")[0]+"@"+vlanid);
 		}
+	 */
 		//linkid改为groupname+vlanid
 		link_id=link_id+"_"+vlanid;
 		Vbridge vbridge=new Vbridge();
