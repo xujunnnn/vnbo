@@ -127,15 +127,16 @@ public class VGroup implements Config,Operational {
 			}
 			mac_Map.setAllowed_hosts(allowed_Hosts);
 			mac_Map.send(null);
-		
-		if(vPorts!=null && vPorts.size()!=0){
-			for(VPort vPort:vPorts){
-				vPort.setVtopo(vtoponame);
-				vPort.setvGroup(group_id);
-				vPort.send(null);
+	}
+		else {
+			if(vPorts!=null && vPorts.size()!=0){
+				for(VPort vPort:vPorts){
+					vPort.setVtopo(vtoponame);
+					vPort.setvGroup(group_id);
+					vPort.send(null);
+				}
 			}
 		}
-	}
 	
 		
 		

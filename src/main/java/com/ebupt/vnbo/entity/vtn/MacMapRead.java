@@ -105,8 +105,9 @@ public class MacMapRead implements Operational{
 		String []result= HttpUtil.Get_request(url);
 		String jsondata=result[1];
 		String responsecode=result[0];
-		if(!"200".equals(responsecode) && ! "201".equals(responsecode))
-				throw new OperationalException("failed to read the mac_map VTn/Vbridge "+tenant_name+"/"+bridge_name);
+		if(!"200".equals(responsecode) && ! "201".equals(responsecode)){
+			return null;
+		}
 		JSONObject json=JSON.parseObject(jsondata);
 		JSONObject jsonObject=json.getJSONArray("vbridge").getJSONObject(0);
 		MacMapRead macMapRead=JSON.toJavaObject(jsonObject, MacMapRead.class);

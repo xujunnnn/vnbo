@@ -25,7 +25,7 @@ public class VnboApplication implements EmbeddedServletContainerCustomizer{
 	@Override
 	public void customize(ConfigurableEmbeddedServletContainer container) {
 		// TODO Auto-generated method stub
-		container.setPort(8081);
+		container.setPort(8080);
 		
 	}
 

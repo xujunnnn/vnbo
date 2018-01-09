@@ -14,7 +14,7 @@ import com.ebupt.vnbo.entity.exception.OperationalException;
 import com.ebupt.vnbo.util.BaseUtil;
 import com.ebupt.vnbo.util.HttpUtil;
 
-public class Mac_MapOld implements Config,Operational{
+public class Mac_MapOld {
 	@JSONField(name="tenant-name")
 	private String tenant_name;
 	@JSONField(name="bridge-name")
@@ -40,35 +40,35 @@ public class Mac_MapOld implements Config,Operational{
 	public HashSet<String> getAllowed_hosts() {
 		return allowed_hosts;
 	}
-	public Mac_Map setAllowed_hosts(HashSet<String> allowed_hosts) {
+	public Mac_MapOld setAllowed_hosts(HashSet<String> allowed_hosts) {
 		this.allowed_hosts = allowed_hosts;
 		return this;
 	}
 	public HashSet<String> getDenyed_Hosts() {
 		return denyed_Hosts;
 	}
-	public Mac_Map setDenyed_Hosts(HashSet<String> denyed_Hosts) {
+	public Mac_MapOld setDenyed_Hosts(HashSet<String> denyed_Hosts) {
 		this.denyed_Hosts = denyed_Hosts;
 		return this;
 	}
 	public String getTenant_name() {
 		return tenant_name;
 	}
-	public Mac_Map setTenant_name(String tenant_name) {
+	public Mac_MapOld setTenant_name(String tenant_name) {
 		this.tenant_name = tenant_name;
 		return this;
 	}
 	public String getBridge_name() {
 		return bridge_name;
 	}
-	public Mac_Map setBridge_name(String bridge_name) {
+	public Mac_MapOld setBridge_name(String bridge_name) {
 		this.bridge_name = bridge_name;
 		return this;
 	}
 	public OperationType getOperation() {
 		return operation;
 	}
-	public Mac_Map setOperation(OperationType operation) {
+	public Mac_MapOld setOperation(OperationType operation) {
 		this.operation = operation;
 		return this;
 	}
@@ -106,7 +106,8 @@ public class Mac_MapOld implements Config,Operational{
 		
 	}
 	**/
-	public Mac_Map read(String node) throws ODL_IO_Exception{
+	/**
+	 * public Mac_Map read(String node) throws ODL_IO_Exception{
 		// TODO Auto-generated method stub
 		String url="http://"+OperationalUrl+"/vtn:vtns/vtn/"+tenant_name+"/vbridge/"+bridge_name+"/mac-map";
 		String []result= HttpUtil.Get_request(url);
@@ -118,6 +119,7 @@ public class Mac_MapOld implements Config,Operational{
 		Mac_Map mac_Map=JSON.parseObject(resultjson.toJSONString(), Mac_Map.class);
 		return mac_Map;
 	}
+	 */
 	public void send(String node) throws ODL_IO_Exception {
 		// TODO Auto-generated method stub
 		String url2="http://"+VtnConfigUrl+"/vtn_access_controller:set-mac-map-acl";
