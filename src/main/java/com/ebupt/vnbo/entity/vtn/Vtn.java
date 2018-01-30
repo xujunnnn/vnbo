@@ -7,6 +7,7 @@ import com.ebupt.vnbo.entity.enums.OperationType;
 import com.ebupt.vnbo.entity.enums.UpDate_Mode;
 import com.ebupt.vnbo.entity.exception.ConfigException;
 import com.ebupt.vnbo.entity.exception.ODL_IO_Exception;
+import com.ebupt.vnbo.entity.vtopo.MacAclList;
 import com.ebupt.vnbo.util.BaseUtil;
 import com.ebupt.vnbo.util.HttpUtil;
 
@@ -87,6 +88,9 @@ public class Vtn implements Config {
 	
 	public void remove(String node) throws ODL_IO_Exception {
 		// TODO Auto-generated method stub
+		Mac_Map mac_Map=new Mac_Map();
+		mac_Map.setTenant_name(tenant_name).setOperation(OperationType.REMOVE);
+		mac_Map.send(null);
 		String url="http://"+VtnConfigUrl+"/vtn:remove-vtn";
 		JSONObject jsonObject=new JSONObject();
 		JSONObject vtnjson=new JSONObject();

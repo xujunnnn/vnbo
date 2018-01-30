@@ -95,7 +95,7 @@ public class VtnRead implements Operational {
 		String jsondata=result[1];
 		String responsecode=result[0];
 		if(!"200".equals(responsecode) && ! "201".equals(responsecode))
-			throw new OperationalException("vtn"+tenant_name+"read failed");
+			return null;
 		JSONObject jsonObject=JSONObject.parseObject(jsondata);
 		JSONObject vtnJsonObject=jsonObject.getJSONArray("vtn").getJSONObject(0);	
 		VtnRead vtnRead=JSONObject.parseObject(vtnJsonObject.toJSONString(), VtnRead.class);

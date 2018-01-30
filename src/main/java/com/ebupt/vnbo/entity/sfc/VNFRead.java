@@ -197,7 +197,6 @@ public class VNFRead implements Operational{
 		VtnRead vtnRead=new VtnRead();
 		vtnRead.setTenant_name(vtopoName);
 		vtnRead=vtnRead.read(null);
-		
 		Map<String, VNFRead> map=new HashMap<>();
 		Set<VNFRead> vnfReads=new HashSet<>();
 		if(vtnRead==null || vtnRead.getVterminalReads()==null)
@@ -210,75 +209,10 @@ public class VNFRead implements Operational{
 			if(vnfName!=null){
 				vnfRead.setName(vnfName);
 				if(!map.containsKey(vnfName)){
-				if(vt.getName().charAt(vt.getName().length()-1)=='0'){
-					Port portA=new Port();
-					VinterfaceRead viA=vt.getVinterfaces().get(0);
-					portA.setPort(viA.getPort_map_config().getPort_name());
-					vnfRead.setPortA(portA);
-					MapDetail mp=new MapDetail();
-					mp.setPortname(viA.getPort_map_config().getPort_name());
-					mp.setMapped_port(viA.getVinterface_status().getMapped_port());
-					mp.setVinterface(viA.getName());
-					mp.setNode(viA.getPort_map_config().getNode());
-					mp.setState(State.valueOf(viA.getVinterface_status().getState()));
-					mp.setVterminalName(vt.getName());
-					vnfRead.setPortAMap(mp);
-					map.put(vnfName,vnfRead);
+					vnfRead=vnfRead.read(null);
+					map.put(vnfName, vnfRead);
 				}
-				else {
-					Port portB=new Port();
-					VinterfaceRead viB=vt.getVinterfaces().get(0);
-					portB.setPort(viB.getPort_map_config().getPort_name());
-					vnfRead.setPortB(portB);
-					MapDetail mp=new MapDetail();
-					mp.setMapped_port(viB.getVinterface_status().getMapped_port());
-					mp.setNode(viB.getPort_map_config().getNode());
-					mp.setVinterface(viB.getName());
-					mp.setState(State.valueOf(viB.getVinterface_status().getState()));
-					mp.setPortname(viB.getPort_map_config().getPort_name());
-					mp.setVterminalName(vt.getName());
-					vnfRead.setPortBMap(mp);
-					map.put(vnfName,vnfRead);
-				}
-				}
-				else {
-					vnfRead=map.get(vnfName);
-					if(vt.getName().charAt(vt.getName().length()-1)=='0'){
-						Port portA=new Port();
-						VinterfaceRead viA=vt.getVinterfaces().get(0);
-						portA.setPort(viA.getPort_map_config().getPort_name());
-						vnfRead.setPortA(portA);
-						MapDetail mp=new MapDetail();
-						mp.setPortname(viA.getPort_map_config().getPort_name());
-						mp.setMapped_port(viA.getVinterface_status().getMapped_port());
-						mp.setVinterface(viA.getName());
-						mp.setNode(viA.getPort_map_config().getNode());
-						mp.setState(State.valueOf(viA.getVinterface_status().getState()));
-						mp.setVterminalName(vt.getName());
-						vnfRead.setPortAMap(mp);
-						map.put(vnfName,vnfRead);
-					}
-					else {
-						Port portB=new Port();
-						VinterfaceRead viB=vt.getVinterfaces().get(0);
-						portB.setPort(viB.getPort_map_config().getPort_name());
-						vnfRead.setPortB(portB);
-						MapDetail mp=new MapDetail();
-						mp.setMapped_port(viB.getVinterface_status().getMapped_port());
-						mp.setNode(viB.getPort_map_config().getNode());
-						mp.setVinterface(viB.getName());
-						mp.setState(State.valueOf(viB.getVinterface_status().getState()));
-						mp.setVterminalName(vt.getName());
-						mp.setPortname(viB.getPort_map_config().getPort_name());
-						vnfRead.setPortBMap(mp);
-						map.put(vnfName,vnfRead);
-					}
-					
-				}
-					   
-			}
-			
-	
+			}	
 		}
 		for(String name:map.keySet()){
 			vnfReads.add(map.get(name));

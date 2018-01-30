@@ -140,6 +140,10 @@ public class VNF implements Config{
 		
 		Port_Map port_Map=new Port_Map();
 		Termination_point tp=topologyService.getPortFromEth(portA.getPort());
+		if(tp==null) {
+			remove(null);
+			throw new ODL_IO_Exception("cannot read port information of: "+portA.getPort());
+		}
 		Node n=topologyService.getNodeFromePort(tp);
 		port_Map.setTenant_name(Vtoponame)
 				.setTerminal_name(name+"_0")
@@ -167,6 +171,10 @@ public class VNF implements Config{
 		
 		Port_Map port_Map1=new Port_Map();
 		Termination_point tp1=topologyService.getPortFromEth(portB.getPort());
+		if(tp1==null) {
+			remove(null);
+			throw new ODL_IO_Exception("cannot read port information of: "+portB.getPort());
+		}
 		Node n1=topologyService.getNodeFromePort(tp1);
 		port_Map1.setTenant_name(Vtoponame)
 				.setTerminal_name(name+"_1")

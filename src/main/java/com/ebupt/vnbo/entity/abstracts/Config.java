@@ -59,7 +59,7 @@ public interface  Config {
 	default void send(String node) throws ODL_IO_Exception{
 
 		String responsecode=HttpUtil.Post_request(toUrl(),toJson())[0];
-		    if(!"201".equals(responsecode) && !"200".equals(responsecode))
+		    if(!"201".equals(responsecode) && !"200".equals(responsecode) && !"409".equals(responsecode))
 		    	throw new ConfigException("created failed");
 		
 	}

@@ -33,5 +33,11 @@ public class MacAclManage {
 	public Result querryMac() throws ODL_IO_Exception{
 		return macAclService.querryMacList();
 	}
+	
+	@ApiOperation(value="查询可用mac白名单")
+	@RequestMapping(value="/MacAclManage/AbleMac",method=RequestMethod.GET)
+	public Result querryAbleMac() throws ODL_IO_Exception{
+		return macAclService.querryAbleMacList();
+	}
 
 }

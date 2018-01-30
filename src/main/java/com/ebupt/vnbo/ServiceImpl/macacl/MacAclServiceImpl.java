@@ -1,11 +1,17 @@
 package com.ebupt.vnbo.ServiceImpl.macacl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.ebupt.vnbo.entity.enums.OperationType;
 import com.ebupt.vnbo.entity.enums.RespCode;
 import com.ebupt.vnbo.entity.exception.ODL_IO_Exception;
 import com.ebupt.vnbo.entity.result.Result;
+import com.ebupt.vnbo.entity.vtn.MappedHost;
+import com.ebupt.vnbo.entity.vtn_accesss.Vbridge;
+import com.ebupt.vnbo.entity.vtn_accesss.Vtn;
 import com.ebupt.vnbo.entity.vtopo.MacAclList;
 import com.ebupt.vnbo.service.macacl.MacAclService;
 @Service
@@ -37,6 +43,37 @@ public class MacAclServiceImpl implements MacAclService{
 		result.setStatus(RespCode.success);
 		return result;
 		
+	}
+
+	@Override
+	public Result<MacAclList> querryAbleMacList() throws ODL_IO_Exception {
+		// TODO Auto-generated method stub
+		Result<MacAclList> result=new Result<>();
+		MacAclList macAclList=new MacAclList();
+		macAclList=macAclList.read(null);
+		List<String> hosts=macAclList.getHosts();
+		List<String> busyhost=new ArrayList<String>();
+		Vtn vtn=new Vtn();
+		List<Vtn> vtns=vtn.readAll();
+		if(vtns!=null){
+			for(Vtn v:vtns){
+				if(v.getVbridge()!=null){
+					for(Vbridge vbridge:v.getVbridge()){
+						if(vbridge.getMappedHost()!=null){
+							for(MappedHost host:vbridge.getMappedHost()){
+								busyhost.add(host.getMac()+"@0");
+							}
+						}
+					}
+				}
+			}
+		}
+		hosts.removeAll(busyhost);
+		macAclList.setHosts(hosts);
+		result.setDescription("success to querry maclist");
+		result.setStatus(RespCode.success);
+		result.setResult(macAclList);
+		return result;
 	}
 
 }

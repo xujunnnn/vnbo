@@ -112,6 +112,10 @@ public class VPort implements Config,Operational{
 		String port=info[2];
 		
 		TopologyService service=new TopologyServiceImpl();
+		PortAclList portAclList=new PortAclList();
+		portAclList.setOperation(OperationType.ADD);
+		portAclList.addPort(vport);
+		portAclList.send(null);
 		VInterface vInterface=new VInterface();
 		vInterface.setTenant_name(vtopo)
 				  .setBridge_name(vGroup)
@@ -132,7 +136,10 @@ public class VPort implements Config,Operational{
 	@Override
 	public void remove(String node) throws ODL_IO_Exception {
 		// TODO Auto-generated method stub
-		read(null);
+		PortAclList portAclList=new PortAclList();
+		portAclList.setOperation(OperationType.REMOVE);
+		portAclList.addPort(vport);
+		portAclList.send(null);
 		VInterface vInterface=new VInterface();
 		vInterface.setTenant_name(vtopo)
 				  .setBridge_name(vGroup)

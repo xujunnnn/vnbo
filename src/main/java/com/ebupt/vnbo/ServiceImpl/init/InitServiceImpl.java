@@ -1,11 +1,14 @@
 package com.ebupt.vnbo.ServiceImpl.init;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.ArchUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +18,9 @@ import com.ebupt.vnbo.entity.enums.RespCode;
 import com.ebupt.vnbo.entity.exception.ODL_IO_Exception;
 import com.ebupt.vnbo.entity.exception.OperationalException;
 import com.ebupt.vnbo.entity.flow.FlowEntry;
+import com.ebupt.vnbo.entity.flow.action.Action;
+import com.ebupt.vnbo.entity.flow.action.OutPut_Action;
+import com.ebupt.vnbo.entity.flow.instruction.Apply_Actions;
 import com.ebupt.vnbo.entity.flow.instruction.Instruction;
 import com.ebupt.vnbo.entity.flow.instruction.Instructions;
 import com.ebupt.vnbo.entity.flow.match.Match;
@@ -46,9 +52,10 @@ public class InitServiceImpl implements InitService{
 	public static String VTN_FLOW_IDLE="3600";
 	public static String VTN_FLOW_HARD="0";
 	private static int mondelay=1;
-	private static int moninterval=5;
-	private ExecutorService service=Executors.newFixedThreadPool(2);
-	private ScheduledExecutorService timerService=Executors.newScheduledThreadPool(10);
+	private static int moninterval=4;
+	private static final int CPUS=Runtime.getRuntime().availableProcessors();
+	private ExecutorService service=Executors.newFixedThreadPool(CPUS);
+	private ScheduledExecutorService timerService=Executors.newScheduledThreadPool(CPUS);
 	private static volatile boolean isMonFlowInstalled=false;
 	@Autowired
 	private TopologyService topologyService;
@@ -69,29 +76,20 @@ public class InitServiceImpl implements InitService{
 			//service.execute(initMonitorFlowTask());
 			//ProtocolMonTask protocolMonTask=new ProtocolMonTask().setIsactive(true);
 			//IpMonitorTask ipMonitorTask=new IpMonitorTask().setIsactive(true);
-			//LatencyMonitorTask latencyMonitorTask=new LatencyMonitorTask().setIsactive(true);
-			//QueueMonitorTask queueMonitorTask=new QueueMonitorTask().setIsactive(true);
-			 
-			//PortMonitorTask portMonitorTask=new PortMonitorTask().setIsactive(true);
+		//	LatencyMonitorTask latencyMonitorTask=new LatencyMonitorTask().setIsactive(true);
+	//		timerService.scheduleWithFixedDelay(latencyMonitorTask, mondelay, moninterval, TimeUnit.SECONDS);
+		
 			FlowMonitorTask flowMonitorTask=new FlowMonitorTask(topologyService);
 			flowMonitorTask.setIsactive(true);
-			
-	
-				timerService.scheduleAtFixedRate(flowMonitorTask, mondelay, moninterval, TimeUnit.SECONDS);
-				/**
-				 * protocolMonTask.setNodes(topologyService.get_switch());
-				ipMonitorTask.setNodes(topologyService.get_switch());
-				queueMonitorTask.setNodes(topologyService.get_switch());
-				
-				portMonitorTask.setNodes(topologyService.get_switch());
-				
-				timerService.scheduleWithFixedDelay(latencyMonitorTask, mondelay, moninterval, TimeUnit.SECONDS);
-				timerService.scheduleWithFixedDelay(protocolMonTask, mondelay, moninterval, TimeUnit.SECONDS);
-				timerService.scheduleWithFixedDelay(queueMonitorTask, mondelay, moninterval, TimeUnit.SECONDS);
-				
-				timerService.scheduleAtFixedRate(portMonitorTask, mondelay, moninterval, TimeUnit.SECONDS);
-				 */
-		
+			timerService.scheduleAtFixedRate(flowMonitorTask, mondelay, moninterval, TimeUnit.SECONDS);
+			QueueMonitorTask queueMonitorTask=new QueueMonitorTask().setIsactive(true);
+			queueMonitorTask.setTopologyService(topologyService);
+			queueMonitorTask.setIsactive(true);
+			timerService.scheduleAtFixedRate(queueMonitorTask, mondelay, moninterval,TimeUnit.SECONDS);
+			PortMonitorTask portMonitorTask=new PortMonitorTask().setIsactive(true);
+			portMonitorTask.setTopologyService(topologyService);
+			timerService.scheduleAtFixedRate(portMonitorTask, mondelay, moninterval,TimeUnit.SECONDS);
+			isMonFlowInstalled=true;
 		}
 		result.setDescription("success to init monitor");
 		result.setStatus(RespCode.success);
@@ -100,6 +98,70 @@ public class InitServiceImpl implements InitService{
 	}
 
 
+	private Runnable initDhcpFlowTask(){
+		return new Runnable() {
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				try {
+					for(Node node:topologyService.get_switch()){
+						int count=5;
+						for(Termination_point point:node.getTermination_points()){
+							FlowEntry flow=new FlowEntry();
+							Match match=new Match();
+							match.setIn_port(point.getTp_id());
+							match.Set_Mac_Match(null, null, "2048");
+							match.Set_Ip_Match("17", null, null, null);
+							match.setUdp_source_port("67");
+							match.setUdp_destination_port("68");
+							Match match2=new Match();
+							match2.setIn_port(point.getTp_id());
+							match2.Set_Mac_Match(null, null, "2048");
+							match2.Set_Ip_Match("17", null, null, null);
+							match2.setUdp_source_port("68");
+							match2.setUdp_destination_port("67");
+							Instruction instruction=new Instruction();
+							ArrayList<Action> actions=new ArrayList<Action>();
+							Action action=new Action();
+							action.Set_Out_Put_Connector("ALL").setOrder("0");
+							actions.add(action);
+							Apply_Actions apply_Actions=new Apply_Actions();
+							apply_Actions.setAction(actions);
+							instruction.setApply_Actions(apply_Actions);
+							instruction.setOrder("0");
+						
+							Instructions instructions=new Instructions();
+							instructions.addInstruction(instruction);
+							try {
+								flow.setId(String.valueOf(count++))
+								.setFlow_name("dhcpflow"+flow.getId())
+								.setCookie(String.valueOf(flow.getId().hashCode()))
+								.setHard_timeout("0")
+								.setIdle_timeout("0")
+								.setPriority(HIGHPRIORITY)
+								.setTable_id("0")
+								.setMatch(match)
+								.setInstructions(instructions)
+								.send(node.getNode_id());
+								flow.setId(String.valueOf(count++)).setMatch(match2).setCookie(String.valueOf(flow.getId().hashCode())).send(node.getNode_id());
+							} catch (ODL_IO_Exception e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+										
+}
+				} catch (ODL_IO_Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			}};
+			
+		
+		
+	}
 	private Runnable initBaseFlowTask(){
 		return new Runnable() {
 			

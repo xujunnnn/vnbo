@@ -10,6 +10,7 @@ import com.ebupt.vnbo.entity.abstracts.Operational;
 import com.ebupt.vnbo.entity.enums.OperationType;
 import com.ebupt.vnbo.entity.enums.UpDate_Mode;
 import com.ebupt.vnbo.entity.exception.ODL_IO_Exception;
+import com.ebupt.vnbo.entity.vtn.VInterface;
 import com.ebupt.vnbo.entity.vtn.Allowed_Hosts;
 import com.ebupt.vnbo.entity.vtn.MacMapRead;
 import com.ebupt.vnbo.entity.vtn.Mac_Map;
@@ -66,7 +67,7 @@ public class VGroup implements Config,Operational {
 			Set<VHost> vHosts=new HashSet<>();
 			for(MappedHost host:mappedHosts){
 				VHost vHost=new VHost();
-				vHost.setHostName("host:"+host.getMac());
+				vHost.setHostName("host:"+host.getMac()+"@0");
 				vHost.setMac(host.getMac());
 				vHost.setVtopo(vtoponame);
 				vHost.setVGroup(group_id);
@@ -74,7 +75,6 @@ public class VGroup implements Config,Operational {
 			}
 			setvHosts(vHosts);
 		}
-		else {
 			VbridgeRead vbridgeRead=new VbridgeRead().setTenant_name(vtoponame).setBridge_name(group_id);
 			vbridgeRead=vbridgeRead.read(null);
 			if(vbridgeRead==null)
@@ -83,6 +83,9 @@ public class VGroup implements Config,Operational {
 				//HashSet<String> if_names=new HashSet<>();
 				HashSet<VPort> vPorts=new HashSet<>();
 				for(VinterfaceRead vinterfaceRead:vbridgeRead.getVinterface()){
+					if(vinterfaceRead.getName()!=null && vinterfaceRead.getName().split("_").length!=4){
+						continue;
+					}
 					VPort vPort=new VPort();
 					vPort.setVtopo(vtoponame);
 					vPort.setvGroup(group_id);
@@ -99,7 +102,7 @@ public class VGroup implements Config,Operational {
 				setvPorts(vPorts);
 			}
 			
-		}
+		
 		return this;
 	}
 
@@ -114,21 +117,17 @@ public class VGroup implements Config,Operational {
 		   .setOperation(OperationType.SET)
 		   .send(null);	
 		if(vHosts!=null && vHosts.size()!=0){
-			Mac_Map mac_Map=new Mac_Map();
-			mac_Map.setOperation(OperationType.ADD);
-			mac_Map.setTenant_name(vtoponame);
-			mac_Map.setBridge_name(group_id);
+			
 			Set<String> allowed_Hosts=new HashSet<>();
 			for(VHost vHost:vHosts){	
 				if(vHost.getHostName().startsWith("host:")){
-					String mac=vHost.getHostName().substring(5);
-					allowed_Hosts.add(mac+"@0");
+					vHost.send(null);
 				}			
 			}
-			mac_Map.setAllowed_hosts(allowed_Hosts);
-			mac_Map.send(null);
+			
+			
 	}
-		else {
+
 			if(vPorts!=null && vPorts.size()!=0){
 				for(VPort vPort:vPorts){
 					vPort.setVtopo(vtoponame);
@@ -136,16 +135,15 @@ public class VGroup implements Config,Operational {
 					vPort.send(null);
 				}
 			}
-		}
-	
-		
-		
 		
 	}
 
 	@Override
 	public void remove(String node) throws ODL_IO_Exception {
 		// TODO Auto-generated method stub
+		Mac_Map mac_Map=new Mac_Map();
+		mac_Map.setTenant_name(vtoponame).setBridge_name(group_id).setOperation(OperationType.REMOVE);
+		mac_Map.send(null);
 		Vbridge vbridge=new Vbridge();
 		vbridge.setBridge_name(group_id)
 					  .setTenant_name(vtoponame)

@@ -21,6 +21,9 @@ import com.ebupt.vnbo.entity.topology.Topology;
 import com.ebupt.vnbo.entity.topology.VLink;
 import com.ebupt.vnbo.entity.topology.VNode;
 import com.ebupt.vnbo.entity.topology.Vtopology;
+import com.ebupt.vnbo.entity.vtn.VbridgeRead;
+import com.ebupt.vnbo.entity.vtn.VinterfaceRead;
+import com.ebupt.vnbo.entity.vtn.VtnRead;
 import com.ebupt.vnbo.entity.vtopo.VGroup;
 import com.ebupt.vnbo.entity.vtopo.VHost;
 import com.ebupt.vnbo.entity.vtopo.VPort;
@@ -171,17 +174,24 @@ public class TopologyServiceImpl implements TopologyService {
     @Override
     public HashSet<String> getBusyPorts() throws ODL_IO_Exception {
         HashSet<String> ports=new HashSet<>();
-        VTopo vTopo=new VTopo();
-        HashSet<VTopo> vTopos=vTopo.readAll();
-        for(VTopo vtopo:vTopos){
-            for(VGroup vGroup:vtopo.getvGroups()){
-               if(vGroup.getvPorts()!=null){
-            	   for(VPort vPort:vGroup.getvPorts()){
-            		   ports.add(vPort.getVport());
-            	   }
-               }
-            }
+        VtnRead vtnRead=new VtnRead();
+        List<VtnRead> vtnReads=vtnRead.readAll();
+        if(vtnReads!=null) {
+        	for(VtnRead vtn:vtnReads) {
+        		if(vtn.getVbridgeReads()!=null) {
+        			for(VbridgeRead vbridge:vtn.getVbridgeReads()) {
+        				if(vbridge.getVinterface()!=null) {
+        					for(VinterfaceRead vinterface:vbridge.getVinterface()) {
+        						if(vinterface.getVinterface_status()!=null) {
+        							ports.add(vinterface.getVinterface_status().getMapped_port());
+        						}
+        					}
+        				}
+        			}
+        		}
+        	}
         }
+        
         return ports;
     }
     
@@ -224,6 +234,8 @@ public class TopologyServiceImpl implements TopologyService {
         HashSet<VTopo> vTopos=vTopo.readAll();
         for(VTopo vtopo:vTopos){
             for(VGroup vGroup:vtopo.getvGroups()){
+            	if(vGroup.getvHosts()==null)
+            		continue;
                 for(VHost vHost:vGroup.getvHosts()){
                     Host host=get_host_from_name(vHost.getHostName());
                     busyHosts.add(host);
@@ -541,7 +553,11 @@ public class TopologyServiceImpl implements TopologyService {
 		// TODO Auto-generated method stub
 		HashSet<Termination_point> ports=new HashSet<>();
 		for(Node node:getNodes()){
-			ports.addAll(node.getTermination_points());
+			for(Termination_point point:node.getTermination_points()){
+				if(point.getTp_id().startsWith("openflow")){
+					ports.add(point);
+				}
+			}
 		}
 		return ports;
 	}

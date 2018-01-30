@@ -1,6 +1,8 @@
 package com.ebupt.vnbo.entity.monitor;
 
+import com.ebupt.vnbo.entity.enums.EtherType;
 import com.ebupt.vnbo.entity.enums.Protocol_Type;
+import com.ebupt.vnbo.entity.flow.match.Ethernet_type;
 
 /**
  * 
@@ -17,6 +19,7 @@ public class MonTag {
 	private Protocol_Type protocol_Type;
 	private String srcmac;
 	private String destmac;
+	private EtherType etherType;
 	private String inport;
 	private String srcip;
 	private String destip;
@@ -28,93 +31,86 @@ public class MonTag {
 	public String getFlowid() {
 		return flowid;
 	}
-	public MonTag setFlowid(String flowid) {
+	public void setFlowid(String flowid) {
 		this.flowid = flowid;
-		return this;
 	}
 	public String getNode() {
 		return node;
 	}
-	public MonTag setNode(String node) {
+	public void setNode(String node) {
 		this.node = node;
-		return this;
 	}
 	public Protocol_Type getProtocol_Type() {
 		return protocol_Type;
 	}
-	public MonTag setProtocol_Type(Protocol_Type protocol_Type) {
+	public void setProtocol_Type(Protocol_Type protocol_Type) {
 		this.protocol_Type = protocol_Type;
-		return this;
 	}
 	public String getSrcmac() {
 		return srcmac;
 	}
-	public MonTag setSrcmac(String srcmac) {
+	public void setSrcmac(String srcmac) {
 		this.srcmac = srcmac;
-		return this;
 	}
 	public String getDestmac() {
 		return destmac;
 	}
-	public MonTag setDestmac(String destmac) {
+	public void setDestmac(String destmac) {
 		this.destmac = destmac;
-		return this;
+	}
+	public EtherType getEtherType() {
+		return etherType;
+	}
+	public void setEtherType(EtherType etherType) {
+		this.etherType = etherType;
 	}
 	public String getInport() {
 		return inport;
 	}
-	public MonTag setInport(String inport) {
+	public void setInport(String inport) {
 		this.inport = inport;
-		return this;
 	}
 	public String getSrcip() {
 		return srcip;
 	}
-	public MonTag setSrcip(String srcip) {
+	public void setSrcip(String srcip) {
 		this.srcip = srcip;
-		return this;
 	}
 	public String getDestip() {
 		return destip;
 	}
-	public MonTag setDestip(String destip) {
+	public void setDestip(String destip) {
 		this.destip = destip;
-		return this;
 	}
 	public String getUdp_srcport() {
 		return udp_srcport;
 	}
-	public MonTag setUdp_srcport(String udp_srcport) {
+	public void setUdp_srcport(String udp_srcport) {
 		this.udp_srcport = udp_srcport;
-		return this;
 	}
 	public String getUdp_destport() {
 		return udp_destport;
 	}
-	public MonTag setUdp_destport(String udp_destport) {
+	public void setUdp_destport(String udp_destport) {
 		this.udp_destport = udp_destport;
-		return this;
 	}
 	public String getTcp_srcport() {
 		return tcp_srcport;
 	}
-	public MonTag setTcp_srcport(String tcp_srcport) {
+	public void setTcp_srcport(String tcp_srcport) {
 		this.tcp_srcport = tcp_srcport;
-		return this;
 	}
 	public String getTcp_destport() {
 		return tcp_destport;
 	}
-	public MonTag setTcp_destport(String tcp_destport) {
+	public void setTcp_destport(String tcp_destport) {
 		this.tcp_destport = tcp_destport;
-		return this;
 	}
 	public String getQueueid() {
 		return queueid;
 	}
-	public MonTag setQueueid(String queueid) {
+	public void setQueueid(String queueid) {
 		this.queueid = queueid;
-		return this;
 	}
 	@Override
 	public int hashCode() {
@@ -122,6 +118,7 @@ public class MonTag {
 		int result = 1;
 		result = prime * result + ((destip == null) ? 0 : destip.hashCode());
 		result = prime * result + ((destmac == null) ? 0 : destmac.hashCode());
+		result = prime * result + ((etherType == null) ? 0 : etherType.hashCode());
 		result = prime * result + ((flowid == null) ? 0 : flowid.hashCode());
 		result = prime * result + ((inport == null) ? 0 : inport.hashCode());
 		result = prime * result + ((node == null) ? 0 : node.hashCode());
@@ -153,6 +150,8 @@ public class MonTag {
 			if (other.destmac != null)
 				return false;
 		} else if (!destmac.equals(other.destmac))
+			return false;
+		if (etherType != other.etherType)
 			return false;
 		if (flowid == null) {
 			if (other.flowid != null)
@@ -211,8 +210,10 @@ public class MonTag {
 	@Override
 	public String toString() {
 		return "MonTag [flowid=" + flowid + ", node=" + node + ", protocol_Type=" + protocol_Type + ", srcmac=" + srcmac
-				+ ", destmac=" + destmac + ", inport=" + inport + ", srcip=" + srcip + ", destip=" + destip
-				+ ", udp_srcport=" + udp_srcport + ", udp_destport=" + udp_destport + ", tcp_srcport=" + tcp_srcport
-				+ ", tcp_destport=" + tcp_destport + ", queueid=" + queueid + "]";
+				+ ", destmac=" + destmac + ", etherType=" + etherType + ", inport=" + inport + ", srcip=" + srcip
+				+ ", destip=" + destip + ", udp_srcport=" + udp_srcport + ", udp_destport=" + udp_destport
+				+ ", tcp_srcport=" + tcp_srcport + ", tcp_destport=" + tcp_destport + ", queueid=" + queueid + "]";
 	}
+	
+
 }

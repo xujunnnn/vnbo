@@ -218,6 +218,9 @@ public class ServiceFunctionChain implements Config{
 				if(i==0){
 					VNFRead vnfRead=new VNFRead().setVtopoName(VtopoName).setName(vnfs.get(i));
 					vnfRead=vnfRead.read(null);
+					if(vnfRead==null){
+						throw new ODL_IO_Exception("no vnf ");
+					}
 					Flow_Filter filter=new Flow_Filter();
 					Vtn_Flow_Filter flow_Filter=new Vtn_Flow_Filter();
 					Vtn_Redirect_Filter redirect_Filter=new Vtn_Redirect_Filter();

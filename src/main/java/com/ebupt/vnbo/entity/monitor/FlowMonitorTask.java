@@ -5,6 +5,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.ebupt.vnbo.entity.enums.EtherType;
 import com.ebupt.vnbo.entity.enums.Protocol_Type;
 import com.ebupt.vnbo.entity.exception.ODL_IO_Exception;
 import com.ebupt.vnbo.entity.flow.FlowEntry;
@@ -110,6 +111,10 @@ public class FlowMonitorTask implements Runnable{
 									if(flowEntry.getMatch().getEthernet_Match().getEthernet_destination()!=null){
 										Ethernet_destination destination=flowEntry.getMatch().getEthernet_Match().getEthernet_destination();
 										monTag.setDestmac(destination.getAddress());
+									}
+									if(flowEntry.getMatch().getEthernet_Match().getEthernet_type()!=null){
+										EtherType type=EtherType.Valueof(flowEntry.getMatch().getEthernet_Match().getEthernet_type().getType());
+										monTag.setEtherType(type);
 									}
 									
 								}

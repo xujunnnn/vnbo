@@ -5,9 +5,11 @@ import java.util.Set;
 
 import com.ebupt.vnbo.entity.abstracts.Config;
 import com.ebupt.vnbo.entity.enums.OperationType;
+import com.ebupt.vnbo.entity.enums.UpDate_Mode;
 import com.ebupt.vnbo.entity.exception.ODL_IO_Exception;
 import com.ebupt.vnbo.entity.vtn.Allowed_Hosts;
 import com.ebupt.vnbo.entity.vtn.Mac_Map;
+import com.ebupt.vnbo.entity.vtn.VInterface;
 
 public class VHost implements Config{
 	private String Vtopo;
@@ -95,10 +97,19 @@ public class VHost implements Config{
 		Set<String> allowed_Hosts=new HashSet<>();
 		if(hostName!=null && hostName.startsWith("host:")){
 			String mac=hostName.substring(5);
-			allowed_Hosts.add(mac+"@0");
+			allowed_Hosts.add(mac);
+			String rawMac=mac.split("@")[0];
+			VInterface vInterface=new VInterface();
+			vInterface.setTenant_name(Vtopo)
+					  .setBridge_name(VGroup)
+					  .setInterface_name(Vtopo+"_"+VGroup+"_"+rawMac.replace(":", "_"))
+					  .setOperation(OperationType.ADD)
+					  .setUpDate_Mode(UpDate_Mode.UPDATE)
+					  .setEnabled(true)
+					  .send(null);			
 		}
 		else if(mac!=null){
-			allowed_Hosts.add(mac+"@0");
+			allowed_Hosts.add(mac);
 		}
 		mac_Map.setAllowed_hosts(allowed_Hosts);
 		mac_Map.send(null);

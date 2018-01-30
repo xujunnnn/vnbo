@@ -136,7 +136,7 @@ public class VInterface implements Config {
 		String []response=HttpUtil.Post_request(url,jsonObject);
 		String responsecode=response[0];
 		String responsebody=response[1];
-		if(!"200".equals(responsecode) && !"201".equals(responsecode))
+		if(!"200".equals(responsecode) && !"201".equals(responsecode) && !"409".equals(responsecode))
 			throw new ODL_IO_Exception("vbridge"+this.getBridge_name()+"created failed");
 		
 	}

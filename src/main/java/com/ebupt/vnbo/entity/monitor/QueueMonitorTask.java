@@ -29,7 +29,16 @@ public class QueueMonitorTask implements Runnable{
 	private static final String measurement="queue_load";
 	private Map<MonTag, NetStatic> netMonitorMap=new HashMap<>();
 	private volatile boolean isactive;
+	private TopologyService topologyService;
 	
+	public TopologyService getTopologyService() {
+		return topologyService;
+	}
+
+	public void setTopologyService(TopologyService topologyService) {
+		this.topologyService = topologyService;
+	}
+
 	public HashSet<Node> getNodes() {
 		return nodes;
 	}
@@ -52,53 +61,60 @@ public class QueueMonitorTask implements Runnable{
 		// TODO Auto-generated method stub
 		while(isactive=true){
 			long timestamp=System.currentTimeMillis();
-			for(Node node:nodes){
-				NodeStatic nodeStatic=new NodeStatic();
-				nodeStatic.setId(node.getNode_id());
-				try {
-					nodeStatic=(NodeStatic)nodeStatic.read(node.getNode_id());
-					for(Node_connector node_connector:nodeStatic.getNode_connector()){
-						if(node_connector.getQueues()!=null){
-						for(Queue queue:node_connector.getQueues()){
-							MonTag monTag=new MonTag().setNode(node.getNode_id()).setInport(node_connector.getId());
-							monTag.setQueueid(queue.getQueue_id());
-							NetStatic netStatic=new NetStatic();
-							long nowbyte=queue.getQueue_Static().getTransmitted_bytes();
-							long nowpkt=queue.getQueue_Static().getTransmitted_packets();
-							long nowtime=queue.getQueue_Static().getDuration().getSecond();
-							netStatic.setBytecount(nowbyte);
-							netStatic.setBytespeed(nowpkt);
-							netStatic.setTimestamp(nowtime);
-							if(netMonitorMap.get(monTag)!=null){					
-								long oldbyte=netMonitorMap.get(monTag).getBytecount();
-								long oldpkt=netMonitorMap.get(monTag).getPacketcount();
-								long oldtime=netMonitorMap.get(monTag).getTimestamp();
-								if(nowbyte < oldbyte){
-									nowbyte=oldbyte+nowbyte;
-								}
-								long bytespeed=0;
-								long pktspeed=0;
-								if((nowtime-oldtime)!=0){
-									 bytespeed=(nowbyte-oldbyte)/(nowtime-oldtime);
-		 						     pktspeed=(nowpkt-oldpkt)/(nowtime-oldtime);
+			try {
+				for(Node node:topologyService.get_access_node()){
+					NodeStatic nodeStatic=new NodeStatic();
+					nodeStatic.setId(node.getNode_id());
+					try {
+						nodeStatic=(NodeStatic)nodeStatic.read(node.getNode_id());
+						for(Node_connector node_connector:nodeStatic.getNode_connector()){
+							if(node_connector.getQueues()!=null){
+							for(Queue queue:node_connector.getQueues()){
+								MonTag monTag=new MonTag();
+								monTag.setNode(node.getNode_id());
+								monTag.setInport(node_connector.getId());
+								monTag.setQueueid(queue.getQueue_id());
+								NetStatic netStatic=new NetStatic();
+								long nowbyte=queue.getQueue_Static().getTransmitted_bytes();
+								long nowpkt=queue.getQueue_Static().getTransmitted_packets();
+								long nowtime=queue.getQueue_Static().getDuration().getSecond();
+								netStatic.setBytecount(nowbyte);
+								netStatic.setBytespeed(nowpkt);
+								netStatic.setTimestamp(nowtime);
+								if(netMonitorMap.get(monTag)!=null){					
+									long oldbyte=netMonitorMap.get(monTag).getBytecount();
+									long oldpkt=netMonitorMap.get(monTag).getPacketcount();
+									long oldtime=netMonitorMap.get(monTag).getTimestamp();
+									if(nowbyte < oldbyte){
+										nowbyte=oldbyte+nowbyte;
+									}
+									long bytespeed=0;
+									long pktspeed=0;
+									if((nowtime-oldtime)!=0){
+										 bytespeed=(nowbyte-oldbyte)/(nowtime-oldtime);
+									     pktspeed=(nowpkt-oldpkt)/(nowtime-oldtime);
+									}
+									else {
+										bytespeed=netMonitorMap.get(monTag).getBytespeed();
+										pktspeed=netMonitorMap.get(monTag).getPacketspeed();
+									}
+									netStatic.setPacketspeed(pktspeed).setBytespeed(bytespeed);				
 								}
 								else {
-									bytespeed=netMonitorMap.get(monTag).getBytespeed();
-									pktspeed=netMonitorMap.get(monTag).getPacketspeed();
+									netStatic.setPacketspeed(0).setBytespeed(0);
 								}
-		 						netStatic.setPacketspeed(pktspeed).setBytespeed(bytespeed);				
+								this.netMonitorMap.put(monTag, netStatic);
 							}
-							else {
-								netStatic.setPacketspeed(0).setBytespeed(0);
-							}
-							this.netMonitorMap.put(monTag, netStatic);
+						  }
 						}
-					  }
+					} catch (ODL_IO_Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
-				} catch (ODL_IO_Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
+			} catch (ODL_IO_Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
 			InfluxDBUtil.put(timestamp,measurement,netMonitorMap);
 			System.out.println("queue  Monitoring "+" Thread "+Thread.currentThread().getName());

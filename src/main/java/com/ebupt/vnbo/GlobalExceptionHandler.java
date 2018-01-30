@@ -26,7 +26,6 @@ public class GlobalExceptionHandler {
         result.setStatus(RespCode.fail);
         result.setDescription(e.getMessage());
         logger.error(result.toString());
-       
         return result;
     }
 }

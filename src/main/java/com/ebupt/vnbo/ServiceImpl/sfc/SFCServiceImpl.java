@@ -1,5 +1,7 @@
 package com.ebupt.vnbo.ServiceImpl.sfc;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,12 +36,12 @@ public class SFCServiceImpl implements SFCService{
 	public Result<ServiceFunctionChain> delSFC(String vtoponame, String name) throws ODL_IO_Exception {
 		// TODO Auto-generated method stub
 		Result<ServiceFunctionChain> result=new Result<>();
-		SfcSave sfcSave=mapper.querrySfcSaveWithName(name);
+		SfcSave sfcSave=mapper.querrySfcSaveWithName(vtoponame,name);
 		if(sfcSave==null)
 			throw new ODL_IO_Exception("no such Sfc");
 		ServiceFunctionChain sfc=sfcSave.toSFC();
 		sfc.remove(null);
-		mapper.deleteSfcSave(name);
+		mapper.deleteSfcSave(vtoponame,name);
 		result.setResult(sfc);
 		result.setDescription("success to remove sfc");
 		result.setStatus(RespCode.success);
@@ -47,25 +49,37 @@ public class SFCServiceImpl implements SFCService{
 	}
 
 	@Override
-	public Result<Set<ServiceFunctionChain>> querrySFCs(String vtoponame) throws ODL_IO_Exception {
+	public Result<List<ServiceFunctionChain>> querrySFCs(String vtoponame) throws ODL_IO_Exception {
 		// TODO Auto-generated method stub
-		return null;
+		Result<List<ServiceFunctionChain>> result=new Result<>();
+		List<ServiceFunctionChain> list=new LinkedList<ServiceFunctionChain>();	
+		List<SfcSave> sfcSaves=mapper.querrySfcSave(vtoponame);
+		if(sfcSaves!=null){
+			for(SfcSave sfcSave:sfcSaves){
+				list.add(sfcSave.toSFC());
+			}
+		}
+		result.setResult(list);
+		result.setStatus(RespCode.success);
+		result.setDescription("success to querry sfc");
+		return result;
 	}
 
 	@Override
 	public Result<ServiceFunctionChain> querrySFC(String vtoponame, String name) throws ODL_IO_Exception {
 		// TODO Auto-generated method stub
 		Result<ServiceFunctionChain> result=new Result<>();
-		SfcSave sfcSave=mapper.querrySfcSaveWithName(name);
+		SfcSave sfcSave=mapper.querrySfcSaveWithName(vtoponame,name);
 		if(sfcSave!=null){
 			result.setResult(sfcSave.toSFC());
 			result.setDescription("success to read sfc");
-			result.setStatus(RespCode.success);
-			return result;
+			result.setStatus(RespCode.success);		
 		}
 		else {
-			throw new ODL_IO_Exception("no such sfc");
+			result.setStatus(RespCode.fail);
+			result.setDescription("no such sfc");
 		}
+		return result;
 	}
 
 }

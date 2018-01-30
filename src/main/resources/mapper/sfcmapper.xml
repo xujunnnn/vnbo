@@ -25,25 +25,26 @@
 
   
   <resultMap type="com.ebupt.vnbo.entity.sfc.SfcSave" id="SFCSAVEResult">
+   <id column="DOMAIN" jdbcType="VARCHAR" property="domain"/>
    <id column="Name" jdbcType="VARCHAR" property="name"/>
    <result column="JSON" jdbcType="VARCHAR" property="json"/>
   </resultMap>
-  <select id="querrySfc" resultMap="SFCSAVEResult">
-    SELECT QOSID,DROPRATE,QUEUEID,SRCHOST,DESTHOST,PROTOCOL,TCPSRCPORT,UDPSRCPORT,TCPDESTPORT,UDPDESTPORT,HASH from QOSPOLICY
+  <select id="querrySfcSave" resultMap="SFCSAVEResult">
+    SELECT DOMAIN,NAME,JSON from SFCSAVE where DOMAIN=#{domain}; 
   </select>
   
   <select id="querrySfcSaveWithName" resultMap="SFCSAVEResult">
-    SELECT NAME,JSON from SFCSAVE where NAME =#{name}; 
+    SELECT DOMAIN,NAME,JSON from SFCSAVE where DOMAIN=#{0} AND NAME=#{1}; 
   </select>
   
 <insert id="insertSfcSave" parameterType="com.ebupt.vnbo.entity.sfc.SfcSave">
-     INSERT ignore into SFCSAVE (NAME,JSON) values(#{name},#{json});
+     INSERT ignore into SFCSAVE (DOMAIN,NAME,JSON) values(#{domain},#{name},#{json});
 </insert>
 
 <update id="updateSfcSave" parameterType="com.ebupt.vnbo.entity.sfc.SfcSave">
      UPDATE  SFCSAVE SET NAME=#{name},JSON=#{json};
 </update>
 <delete id="deleteSfcSave">
-        delete from SFCSAVE where NAME=#{name}
+        delete from SFCSAVE where DOMAIN=#{0} AND NAME=#{1}
 </delete>
 </mapper>

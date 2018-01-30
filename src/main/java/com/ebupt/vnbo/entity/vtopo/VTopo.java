@@ -171,6 +171,7 @@ public class VTopo implements Config,Operational {
 	public VTopo read(String node) throws ODL_IO_Exception {
 		// TODO Auto-generated method stub
 		VtnRead vtnRead=new VtnRead().setTenant_name(Vtopo_name);
+		
 		vtnRead=vtnRead.read(null);
 		if(vtnRead!=null && vtnRead.getVbridgeReads()!=null){
 			for(VbridgeRead vbr:vtnRead.getVbridgeReads()){
@@ -180,6 +181,7 @@ public class VTopo implements Config,Operational {
 				vGroups.add(vGroup);
 			}
 		}
+		
 		
 		return this;
 	}

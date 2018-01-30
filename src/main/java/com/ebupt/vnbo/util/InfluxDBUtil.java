@@ -100,6 +100,11 @@ public class InfluxDBUtil {
 						tags.put("SrcIp", monTag.getSrcip());
 					else 
 						tags.put("SrcIp", "null");
+					if(monTag.getEtherType()!=null)
+						tags.put("EtherProto", monTag.getEtherType().toString());
+					else {
+						tags.put("EtherProto","null");
+					}
 					if(monTag.getDestip()!=null)
 						tags.put("DestIp", monTag.getDestip());
 					else 
