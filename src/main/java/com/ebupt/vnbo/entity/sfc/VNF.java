@@ -1,10 +1,6 @@
 package com.ebupt.vnbo.entity.sfc;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.alibaba.fastjson.annotation.JSONField;
 import com.ebupt.vnbo.entity.abstracts.Config;
-import com.ebupt.vnbo.entity.abstracts.Operational;
 import com.ebupt.vnbo.entity.enums.OperationType;
 import com.ebupt.vnbo.entity.enums.UpDate_Mode;
 import com.ebupt.vnbo.entity.enums.VNFType;
@@ -18,7 +14,6 @@ import com.ebupt.vnbo.entity.vtn.VInterface;
 import com.ebupt.vnbo.entity.vtn.Vterminal;
 import com.ebupt.vnbo.service.topology.TopologyService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class VNF implements Config{
 	private String name;
 	private String Vtoponame;

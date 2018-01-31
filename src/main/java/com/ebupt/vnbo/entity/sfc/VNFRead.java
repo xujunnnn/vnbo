@@ -153,25 +153,31 @@ public class VNFRead implements Operational{
 				if(vt.getName().charAt(vt.getName().length()-1)=='0'){
 					Port portA=new Port();
 					VinterfaceRead viA=vt.getVinterfaces().get(0);
+					if(viA.getPort_map_config()==null || viA.getPort_map_config().getPort_name()==null)
+						continue;
 					portA.setPort(viA.getPort_map_config().getPort_name());
 					setPortA(portA);
 					MapDetail mp=new MapDetail();
+					if(viA.getVinterface_status()==null || viA.getVinterface_status().getMapped_port()==null)
+						continue;
 					mp.setMapped_port(viA.getVinterface_status().getMapped_port());
 					mp.setVinterface(viA.getName());
-					mp.setNode(viA.getPort_map_config().getNode());
 					mp.setState(State.valueOf(viA.getVinterface_status().getState()));
 					mp.setPortname(viA.getPort_map_config().getPort_name());
 					mp.setVterminalName(vt.getName());
 					setPortAMap(mp);
 					setType(VNFType.valueOf(vt.getVterminal_config().getDescription()));
-					
 				}
 				else {
 					Port portB=new Port();
 					VinterfaceRead viB=vt.getVinterfaces().get(0);
+					if(viB.getPort_map_config()==null || viB.getPort_map_config().getPort_name()==null)
+						continue;
 					portB.setPort(viB.getPort_map_config().getPort_name());
 					setPortB(portB);
 					MapDetail mp=new MapDetail();
+					if(viB.getVinterface_status()==null || viB.getVinterface_status().getMapped_port()==null)
+						continue;
 					mp.setMapped_port(viB.getVinterface_status().getMapped_port());
 					mp.setNode(viB.getPort_map_config().getNode());
 					mp.setVinterface(viB.getName());
@@ -182,14 +188,10 @@ public class VNFRead implements Operational{
 				}
 				if(this.portA!=null && this.portB!=null){
 					return this;
-				}
-				
-			}
-			
-			
+				}			
+			}	
 		}
-		return null;
-		
+		return null;	
 	}
 	
 	
